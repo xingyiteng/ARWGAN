@@ -1,7 +1,9 @@
 import torch.nn as nn
 import torch
-from kornia.color.adjust import AdjustHue,AdjustSaturation,AdjustContrast,AdjustBrightness,AdjustGamma
+# from kornia.color.adjust import AdjustHue,AdjustSaturation,AdjustContrast,AdjustBrightness,AdjustGamma
 import math
+
+from kornia.enhance import AdjustContrast
 from torchvision.transforms import ToPILImage
 class Adjust_contrast(nn.Module):
     def __init__(self,factor):

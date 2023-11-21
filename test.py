@@ -44,9 +44,9 @@ def main():
     parser = argparse.ArgumentParser(description='Test trained models')
     parser.add_argument('--options-file', '-o', default='options-and-config.pickle', type=str,
                         help='The file where the simulation options are stored.')
-    parser.add_argument('--checkpoint-file', '-c', required=True, type=str, help='Model checkpoint file')
+    parser.add_argument('--checkpoint-file', '-c', default='third--epoch-1.pyt', type=str, help='Model checkpoint file')
     parser.add_argument('--batch-size', '-b', default=12, type=int, help='The batch size.')
-    parser.add_argument('--source_images', '-s', required=True, type=str,
+    parser.add_argument('--source_images', '-s', default='./testDataSet/', type=str,
                         help='The image to watermark')
     parser.add_argument("--noise", '-n', nargs="*", action=NoiseArgParser)
     # parser.add_argument('--times', '-t', default=10, type=int,
@@ -57,7 +57,7 @@ def main():
     noise_config = args.noise
     noiser = Noiser(noise_config, device)
 
-    checkpoint = torch.load(args.checkpoint_file)
+    checkpoint = torch.load(args.checkpoint_file, map_location=device)
     hidden_net = ARWGAN(net_config, device, noiser, None)
     utils.model_from_checkpoint(hidden_net, checkpoint)
     source_images = os.listdir(args.source_images)

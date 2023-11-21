@@ -22,10 +22,10 @@ def main():
     parent_parser = argparse.ArgumentParser(description='Training of ARWGAN nets')
     subparsers = parent_parser.add_subparsers(dest='command', help='Sub-parser for commands')
     new_run_parser = subparsers.add_parser('new', help='starts a new run')
-    new_run_parser.add_argument('--data-dir', '-d', required=True, type=str,
+    new_run_parser.add_argument('--data-dir', '-d', default='D:\\workspace\\watermark\\DataSet\\COCO\\data', type=str,
                                 help='The directory where the data is stored.')
-    new_run_parser.add_argument('--batch-size', '-b', required=True, type=int, help='The batch size.')
-    new_run_parser.add_argument('--epochs', '-e', default=100, type=int, help='Number of epochs to run the simulation.')
+    new_run_parser.add_argument('--batch-size', '-b', default=12, type=int, help='The batch size.')
+    new_run_parser.add_argument('--epochs', '-e', default=1, type=int, help='Number of epochs to run the simulation.')
     new_run_parser.add_argument('--name', required=True, type=str, help='The name of the experiment.')
 
     new_run_parser.add_argument('--size', '-s', default=128, type=int,
