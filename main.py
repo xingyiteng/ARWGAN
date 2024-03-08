@@ -16,11 +16,15 @@ from train import train
 
 
 def main():
+    # 设置CUDA环境变量，指定只使用ID为0的GPU设备。
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+    # 优先使用GPU进行计算，如果没有可用的GPU，则降级使用CPU。
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
+    # 创建一个根解析器，然后添加“new”和“continue”这两个子命令解析器。
     parent_parser = argparse.ArgumentParser(description='Training of ARWGAN nets')
     subparsers = parent_parser.add_subparsers(dest='command', help='Sub-parser for commands')
+
     new_run_parser = subparsers.add_parser('new', help='starts a new run')
     new_run_parser.add_argument('--data-dir', '-d', default='D:\\workspace\\watermark\\DataSet\\COCO\\data', type=str,
                                 help='The directory where the data is stored.')
@@ -52,10 +56,11 @@ def main():
     continue_parser.add_argument('--data-dir', '-d', required=False, type=str,
                                  help='The directory where the data is stored. Specify a value only if you want to override the previous value.')
     continue_parser.add_argument('--epochs', '-e', required=False, type=int,
-                                help='Number of epochs to run the simulation. Specify a value only if you want to override the previous value.')
+                                 help='Number of epochs to run the simulation. Specify a value only if you want to override the previous value.')
     # continue_parser.add_argument('--tensorboard', action='store_true',
     #                             help='Override the previous setting regarding tensorboard logging.')
 
+    # 解析命令行输入的参数
     args = parent_parser.parse_args()
     checkpoint = None
     loaded_checkpoint_file_name = None
@@ -64,7 +69,8 @@ def main():
         this_run_folder = args.folder
         options_file = os.path.join(this_run_folder, 'options-and-config.pickle')
         train_options, net_config, noise_config = utils.load_options(options_file)
-        checkpoint, loaded_checkpoint_file_name = utils.load_last_checkpoint(os.path.join(this_run_folder, 'checkpoints'))
+        checkpoint, loaded_checkpoint_file_name = utils.load_last_checkpoint(
+            os.path.join(this_run_folder, 'checkpoints'))
         train_options.start_epoch = checkpoint['epoch'] + 1
         if args.data_dir is not None:
             train_options.train_folder = os.path.join(args.data_dir, 'train')
@@ -83,32 +89,32 @@ def main():
         train_options = TrainingOptions(
             batch_size=args.batch_size,
             number_of_epochs=args.epochs,
-            train_folder=os.path.join(args.data_dir,'train'),
-            validation_folder=os.path.join(args.data_dir,'val'),
+            train_folder=os.path.join(args.data_dir, 'train'),
+            validation_folder=os.path.join(args.data_dir, 'val'),
             runs_folder=os.path.join('.', 'runs'),
             start_epoch=start_epoch,
             experiment_name=args.name)
 
         noise_config = args.noise if args.noise is not None else []
         net_config = HiDDenConfiguration(H=args.size, W=args.size,
-                                            message_length=args.message,
-                                            encoder_blocks=4, encoder_channels=64,
-                                            decoder_blocks=7, decoder_channels=64,
-                                            use_discriminator=True,
-                                            use_vgg=False,
-                                            discriminator_blocks=3, discriminator_channels=64,
-                                            decoder_loss=1,
-                                            encoder_loss=0.7,
-                                            adversarial_loss=1e-3,
-                                            enable_fp16=args.enable_fp16
-                                            )
+                                         message_length=args.message,
+                                         encoder_blocks=4, encoder_channels=64,
+                                         decoder_blocks=7, decoder_channels=64,
+                                         use_discriminator=True,
+                                         use_vgg=False,
+                                         discriminator_blocks=3, discriminator_channels=64,
+                                         decoder_loss=1,
+                                         encoder_loss=0.7,
+                                         adversarial_loss=1e-3,
+                                         enable_fp16=args.enable_fp16
+                                         )
 
         this_run_folder = utils.create_folder_for_run(train_options.runs_folder, args.name)
+        # 打开options-and-config.pickle文件，将 train_options、noise_config 和 net_config 序列化为二进制形式保存到这个文件中
         with open(os.path.join(this_run_folder, 'options-and-config.pickle'), 'wb+') as f:
             pickle.dump(train_options, f)
             pickle.dump(noise_config, f)
             pickle.dump(net_config, f)
-
 
     logging.basicConfig(level=logging.INFO,
                         format='%(message)s',

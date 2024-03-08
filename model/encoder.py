@@ -83,19 +83,33 @@ class Encoder(nn.Module):
     def forward(self, image, message):
         H, W = image.size()[2], image.size()[3]
 
+        # 水印空间维度扩展
         expanded_message = message.unsqueeze(-1)
         expanded_message.unsqueeze_(-1)
         expanded_message = expanded_message.expand(-1, -1, H, W)
 
+        # C1/C2 浅层特征
         feature0 = self.first_layer(image)
+
+        # LayerD 深层特征
         feature1 = self.Dense_block1(torch.cat((feature0, expanded_message), 1), last=True)
         feature2 = self.Dense_block2(torch.cat((feature0, expanded_message, feature1), 1), last=True)
         feature3 = self.Dense_block3(torch.cat((feature0, expanded_message, feature1, feature2), 1), last=True)
+
+        # LayerF 调整水印特征、降低维度
         feature3 = self.fivth_layer(torch.cat((feature3, expanded_message), 1))
+
+        # LayerV 深层特征
         feature_attention = self.Dense_block_a3(self.Dense_block_a2(self.Dense_block_a1(feature0)), last=True)
+
+        # LayerA
         feature_mask = (self.sixth_layer(feature_attention)) * 30
+
+        # 调整Fw的分布
         feature = feature3 * feature_mask
         im_w = self.final_layer(feature)
+
+        # Global Residual Learning
         im_w = im_w + image
         return im_w
 
