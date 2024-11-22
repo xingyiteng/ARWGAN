@@ -49,7 +49,7 @@ def train(model: ARWGAN,
         for image, _ in train_data:
             # 将图片移动到之前定义的设备
             image = image.to(device)
-            # 生成随机的message
+            # 生成随机的message image.shape[0]：消息的数量
             message = torch.Tensor(np.random.choice([0, 1], (image.shape[0], net_config.message_length))).to(device)
             # 获得图像损失
             losses, _ = model.train_on_batch([image, message])

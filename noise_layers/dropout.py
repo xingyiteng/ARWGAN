@@ -8,8 +8,8 @@ class Dropout(nn.Module):
     """
     def __init__(self, keep_ratio_range):
         super(Dropout, self).__init__()
-        self.keep_min = np.sqrt(keep_ratio_range[0])
-        self.keep_max = np.sqrt(keep_ratio_range[1])
+        self.keep_min = keep_ratio_range[0]
+        self.keep_max = keep_ratio_range[1]
 
 
     def forward(self, noised_and_cover):

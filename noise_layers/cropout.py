@@ -10,8 +10,8 @@ class Cropout(nn.Module):
     """
     def __init__(self, height_ratio_range, width_ratio_range):
         super(Cropout, self).__init__()
-        self.height_ratio_range = np.sqrt(height_ratio_range)
-        self.width_ratio_range = np.sqrt(width_ratio_range)
+        self.height_ratio_range = height_ratio_range
+        self.width_ratio_range = width_ratio_range
 
     def forward(self, noised_and_cover):
         noised_image = noised_and_cover[0]

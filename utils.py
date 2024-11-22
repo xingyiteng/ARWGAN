@@ -126,18 +126,22 @@ def get_data_loaders(network_config: HiDDenConfiguration, train_options: Trainin
     transform it into tensor, and normalize it."""
     data_transforms = {
         'train': transforms.Compose([
+            # 随机裁剪图像到配置中指定的高度和宽度
             transforms.RandomCrop((network_config.H, network_config.W), pad_if_needed=True),
             transforms.ToTensor(),
+            # 对张量进行归一化，使用均值 [0.5, 0.5, 0.5] 和标准差 [0.5, 0.5, 0.5] 分别对RGB三个通道进行标准化，使其值在[-1,1]范围内。
             transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
         ]),
         'test': transforms.Compose([
+            # 对图像做中心裁剪到指定尺寸。
             transforms.CenterCrop((network_config.H, network_config.W)),
             transforms.ToTensor(),
             transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])
         ])
     }
-
+    # 从train_options.train_folder目录中加载数据，并进行data_transforms['train']的操作
     train_images = datasets.ImageFolder(train_options.train_folder, data_transforms['train'])
+    # 创建训练数据加载器
     train_loader = torch.utils.data.DataLoader(train_images, batch_size=train_options.batch_size, shuffle=True,
                                                num_workers=4)
 

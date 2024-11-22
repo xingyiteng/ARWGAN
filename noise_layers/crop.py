@@ -57,8 +57,8 @@ class Crop(nn.Module):
         :param width_ratio_range:
         """
         super(Crop, self).__init__()
-        self.height_ratio_range = np.sqrt(height_ratio_range)
-        self.width_ratio_range = np.sqrt(width_ratio_range)
+        self.height_ratio_range = height_ratio_range
+        self.width_ratio_range = width_ratio_range
 
 
     def forward(self, noised_and_cover):

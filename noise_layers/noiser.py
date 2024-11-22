@@ -29,10 +29,17 @@ class Noiser(nn.Module):
             # self.noise_layers = nn.Sequential(*noise_layers)
 
     def forward(self, encoded_and_cover):
-        random_noise_layer = np.random.choice(self.noise_layers, 1)[0]
+        # random_noise_layer = np.random.choice(self.noise_layers, 1)[0]
         "If you want to use specific noise, you can set it like this. " 
         "self.noise_layers[i](encoded_and_cover)"
         # print(random_noise_layer)
+        random_noise_layer = self.noise_layers[0]
         return random_noise_layer(encoded_and_cover)
+
+        # 修改这里，让所有噪声层顺序执行
+        # current_output = encoded_and_cover
+        # for layer in self.noise_layers[1:]:  # 跳过Identity层
+        #     current_output = layer(current_output)
+        # return current_output
 
 

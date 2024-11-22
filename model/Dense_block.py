@@ -31,8 +31,11 @@ class _DenseBlock(nn.Sequential):
             self.add_module('denselayer%d' % (i + 1), layer)
 
 class Bottleneck(nn.Module):
+    # nChannels：输入特征图的通道数
+    # growthRate：密集块的输出通道数
     def __init__(self, nChannels, growthRate):
         super(Bottleneck, self).__init__()
+        # 中间通道数，通常是输入通道数的4倍
         interChannels = 4*growthRate
         self.relu=nn.ReLU(inplace=True)
         self.bn1 = nn.BatchNorm2d(nChannels)
@@ -45,8 +48,10 @@ class Bottleneck(nn.Module):
     def forward(self, x,last=False):
         out = self.conv1(self.relu(self.bn1(x)))
         out = self.conv2(self.relu(self.bn2(out)))
+        # true, 只返回新生成的特征
         if last:
             return out
         else:
+            # false, 返回与x通道的拼接
             return torch.cat((x, out), 1)
 

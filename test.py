@@ -42,11 +42,11 @@ def main():
         device = torch.device('cpu')
 
     parser = argparse.ArgumentParser(description='Test trained models')
-    parser.add_argument('--options-file', '-o', default='options-and-config.pickle', type=str,
+    parser.add_argument('--options-file', '-o', default='./pretrain/options-and-config.pickle', type=str,
                         help='The file where the simulation options are stored.')
-    parser.add_argument('--checkpoint-file', '-c', default='third--epoch-1.pyt', type=str, help='Model checkpoint file')
+    parser.add_argument('--checkpoint-file', '-c', default='./pretrain/checkpoints/ARWGAN.pyt', type=str, help='Model checkpoint file')
     parser.add_argument('--batch-size', '-b', default=12, type=int, help='The batch size.')
-    parser.add_argument('--source_images', '-s', default='./testDataSet/', type=str,
+    parser.add_argument('--source_images', '-s', default='D:\\workspace\\watermark\\DataSet\\COCO\\data\\test\\test_class', type=str,
                         help='The image to watermark')
     parser.add_argument("--noise", '-n', nargs="*", action=NoiseArgParser)
     # parser.add_argument('--times', '-t', default=10, type=int,
@@ -63,7 +63,8 @@ def main():
     source_images = os.listdir(args.source_images)
 
     for source_image in source_images:
-        image_pil = Image.open(args.source_images + source_image)
+        image_pil = Image.open(os.path.join(args.source_images, source_image))
+        # image_pil = Image.open(args.source_images + source_image)
         image_pil = image_pil.resize((net_config.H, net_config.W))
         image_tensor = TF.to_tensor(image_pil).to(device)
         image_tensor = image_tensor * 2 - 1
